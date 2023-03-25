@@ -196,8 +196,7 @@ class PratikDB {
         if ($this->limit !== null) {
             $query .= " LIMIT $this->limit";
         }
-
-        echo $query;
+ 
         return $query;
     }
     
