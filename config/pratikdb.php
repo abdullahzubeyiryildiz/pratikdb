@@ -78,7 +78,8 @@ class PratikDB {
             return $this->whereNested($column);
         }
         
-        if ($operator === null) {
+        if ($value === null) {
+            $value = $operator;
             $operator = '=';
         }
         
@@ -103,8 +104,7 @@ class PratikDB {
     public function orWhere($column, $operator = null, $value = null) {
         return $this->where($column, $operator, $value, 'OR');
     }
-    
-    
+
     public function when($condition, callable $callback, callable $default = null)
     {
         if ($condition) {
@@ -160,8 +160,7 @@ class PratikDB {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
     
-    public function first()
-    {
+    public function first() {
         $this->limit(1);
         $result = $this->get();
         return count($result) ? reset($result) : null;
@@ -187,7 +186,7 @@ class PratikDB {
         
         if (!empty($this->where)) {
             $whereString = implode(' ', $this->where);
-            $whereString = preg_replace('/^(AND|OR)\s/', '', $whereString);
+            $whereString = preg_replace('/^\s*(AND|OR)\s*/', '', $whereString); 
             $query .= " WHERE " . $whereString;
         }
         
@@ -197,6 +196,8 @@ class PratikDB {
         if ($this->limit !== null) {
             $query .= " LIMIT $this->limit";
         }
+
+        echo $query;
         return $query;
     }
     
