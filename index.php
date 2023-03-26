@@ -36,7 +36,7 @@ $results = $pratikdb->table('products')
     ->get();
 
   /*  $products = $pratikdb->table('products')
-    ->select('products.name', 'products.price', 'categories.name as category')
+    ->select('products.name', 'products.price', 'categories.cat_name as category')
     ->join('categories', 'products.category_id', '=', 'categories.id')
     ->whereBetween('products.price', 10, 100, 'AND')
     ->orderBy('products.price', 'DESC')
@@ -68,34 +68,40 @@ $results = $pratikdb->table('products')
     ->limit(10)
     ->get(); */
  
-    $deneme = $pratikdb->table('products')
+   /* $deneme = $pratikdb->table('products')
     ->select(['name', 'price'])
     ->where(function ($query) {
         $query->where('price', '>', 50);
     })
     ->orderBy('price', 'DESC')
     ->limit(10)
-    ->get(); 
+    ->get(); */
+
+    $deneme3 = $pratikdb->table('products')
+    ->select('products.name', 'products.price', 'categories.cat_name as category')
+    ->join('categories', 'products.category_id', '=', 'categories.id')
+    ->whereIn('products.id', [3, 4])
+    ->toJson();
 
    /* $deneme3 = $pratikdb->table('products')
     ->whereIn('id', [2, 3, 4])
     ->get(); */
 
     /* 
-    ->select('products.name', 'products.price', 'categories.name as category')
+    ->select('products.name', 'products.price', 'categories.cat_name as category')
     ->join('categories', 'products.category_id', '=', 'categories.id')
     ->where('products.price', '>', 10)
     ->where('products.price', '<', 100)
     ->where('products.name', 'LIKE', '%m%')
     ->orderBy('products.price', 'DESC')*/
-dd($deneme);
+dd($deneme3);
 //,'id'
 
 $products = $pratikdb->table('products')
-    ->select('products.name', 'products.price', 'categories.name as category')
+    ->select('products.name', 'products.price', 'categories.cat_name as category')
     ->join('categories', 'products.category_id', '=', 'categories.id')
     ->whereBetween('products.price', 10, 20)
-    ->orderBy('categories.name', 'ASC')
+    ->orderBy('categories.cat_name', 'ASC')
     ->get();  
 
 
