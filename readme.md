@@ -26,7 +26,7 @@ include 'config/pratikdb.php';
 
 ### Kullanım - Aynı Sayfada Birden Fazla Sorgu
 
-Eğer aynı sayfada birden fazla sorgu çalıştırmak isterseniz, her sorgu için yeni bir PratikDB nesnesi oluşturarak önceki sorguların birbirini etkilemesini önleyebilirsiniz: 
+<b>Eğer aynı sayfada birden fazla sorgu çalıştırmak isterseniz, her sorgu için yeni bir PratikDB nesnesi oluşturarak önceki sorguların birbirini etkilemesini önleyebilirsiniz.</b>
 PratikDB sınıfı, aşağıdaki gibi temel CRUD işlemleri ve daha fazlasını gerçekleştirebilir.
 
 ```php
