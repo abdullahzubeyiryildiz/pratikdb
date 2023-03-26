@@ -89,7 +89,7 @@ class PratikDB {
         return $this;
     }
 
-   public function whereNested(callable $callback)
+    public function whereNested(callable $callback)
     {
         $subQuery = new static($this->pdo);
         $callback($subQuery);
@@ -118,6 +118,9 @@ class PratikDB {
 
     
     public function whereIn($column, $values) {
+        if (strpos($column, '.') === false) {
+            $column = "$this->table.$column";
+        }
         $valueString = implode(',', array_fill(0, count($values), '?'));
         $this->where[] = "$column IN ($valueString)";
         $this->bindings = array_merge($this->bindings, $values);
@@ -187,7 +190,7 @@ class PratikDB {
             } else {
                 $stmt->bindValue($index + 1, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
             }
-        } 
+        }  
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
@@ -219,24 +222,7 @@ class PratikDB {
         }
         
         if (!empty($this->where)) {
-            $whereString = '';
-            $bindings = [];
-            foreach ($this->where as $where) {
-                if (is_array($where)) {
-                    if ($where['type'] === 'between') {
-                        $whereString .= "{$where['boolean']} {$where['column']} BETWEEN ? AND ? ";
-                        $bindings[] = $where['min'];
-                        $bindings[] = $where['max'];
-                    } else {
-                        $whereString .= "{$where['boolean']} {$where['column']} {$where['operator']} ? ";
-                        $bindings[] = $where['value'];
-                    }
-                } else {
-                    $whereString .= "{$where} ";
-                }
-            }
-            $whereString = preg_replace('/^\s*(AND|OR)\s*/', '', $whereString);
-            $query .= " WHERE " . $whereString;
+            $query .= " WHERE " . implode(' AND ', $this->where);
         }
         
         if (!empty($this->order)) {

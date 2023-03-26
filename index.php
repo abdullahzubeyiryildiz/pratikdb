@@ -25,7 +25,7 @@ $results = $pratikdb->table('products')
  // $names = $pratikdb->table('products')->toArray();
  // $names = $pratikdb->table('products')->toJson();
   //  $names = $pratikdb->table('products')->pluck('name', 'id')->toArray();
-  $results = $pratikdb->table('products')
+  /* $results = $pratikdb->table('products')
     ->select(['name', 'price'])
     ->where(function ($query) {
         $query->where('price', '>', 50);
@@ -44,20 +44,42 @@ $results = $pratikdb->table('products')
     ->get();
     */
 
-    $product = $pratikdb->table('products')
+   /* $product = $pratikdb->table('products')
     ->select('products.name', 'products.price', 'categories.cat_name as category')
     ->join('categories', 'products.category_id', '=', 'categories.id')
     ->whereBetween('products.price', 10, 100) 
-    ->first();
-   
-   /* $products = $pratikdb->table('products')
-    ->select('products.name', 'products.price', 'categories.name as category')
-    ->join('categories', 'products.category_id', '=', 'categories.id')
-    ->where('price', '>', 10)
-    ->where('price', '<', 100, 'OR')
-    ->buildQuery(); */
- 
+    ->first(); */
 
+  /*  $result = $pratikdb->table('products') 
+             ->get();
+   
+  $deneme2 = $pratikdb->table('products')
+    ->select('products.name', 'products.price', 'categories.cat_name as category')
+    ->join('categories', 'products.category_id', '=', 'categories.id') 
+    ->where('products.price', '=', 200) 
+    ->get();   
+
+    $deneme = $pratikdb->table('products')
+    ->select(['name', 'price'])
+    ->where(function ($query) {
+        $query->where('price', '>', 50);
+    })
+    ->orderBy('price', 'DESC')
+    ->limit(10)
+    ->get(); */
+ 
+    $deneme = $pratikdb->table('products')
+    ->select(['name', 'price'])
+    ->where(function ($query) {
+        $query->where('price', '>', 50);
+    })
+    ->orderBy('price', 'DESC')
+    ->limit(10)
+    ->get(); 
+
+   /* $deneme3 = $pratikdb->table('products')
+    ->whereIn('id', [2, 3, 4])
+    ->get(); */
 
     /* 
     ->select('products.name', 'products.price', 'categories.name as category')
@@ -66,7 +88,7 @@ $results = $pratikdb->table('products')
     ->where('products.price', '<', 100)
     ->where('products.name', 'LIKE', '%m%')
     ->orderBy('products.price', 'DESC')*/
-dd($product);
+dd($deneme);
 //,'id'
 
 $products = $pratikdb->table('products')

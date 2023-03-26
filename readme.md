@@ -24,8 +24,21 @@ include 'config/db.php';
 include 'config/pratikdb.php'; 
 ```
 
-#### Kullanım
+### Kullanım - Aynı Sayfada Birden Fazla Sorgu
+
+Eğer aynı sayfada birden fazla sorgu çalıştırmak isterseniz, her sorgu için yeni bir PratikDB nesnesi oluşturarak önceki sorguların birbirini etkilemesini önleyebilirsiniz: 
 PratikDB sınıfı, aşağıdaki gibi temel CRUD işlemleri ve daha fazlasını gerçekleştirebilir.
+
+```php
+//örnek kullanımlar
+$pratikdb1 = new PratikDB($db);
+$deneme1 = $pratikdb1->table('products')
+    ->whereIn('id', [2, 3, 4])
+    ->get();
+
+$pratikdb2 = new PratikDB($db);
+$names = $pratikdb2->table('products')->pluck('name'); 
+```
 
 ```php
 //Veritabanı bağlantısı oluşturma 
@@ -100,6 +113,7 @@ $result = $pratikdb->table('users')
 when fonksiyonu, belirtilen koşulun doğru olması durumunda bir işlem yapmak için kullanılır. Koşul yanlışsa, varsayılan bir işlem yapılır.
 
 ```php
+
 $result = $pratikdb->table('users')
              ->when($isAdult, function($query) {
                  $query->where('age', '>=', 18);
