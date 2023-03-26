@@ -75,12 +75,45 @@ $results = $pratikdb->table('products')
 
 PratikDB sınıfı, `where`, `whereIn`, `whereBetween`, `when` gibi filtreleme ve koşul sağlayan daha fazla yönteme sahiptir. Ayrıca `pluck`, `toArray`, `toJson` ve `toSql` gibi ek yardımcı işlevler sağlar. Bu yöntemlerin daha fazla örneği şunlardır:
 
+#### whereIn
+
+whereIn fonksiyonu, belirtilen sütunda değerlerin bir dizi ile eşleşip eşleşmediğini sorgulamak için kullanılır.
+
+```php
+$result = $pratikdb->table('users')
+             ->whereIn('id', [1, 2, 3])
+             ->get();
+ ```
+
+ #### whereBetween
+
+whereBetween fonksiyonu, belirtilen sütunda verilen iki değer arasında kalan değerleri sorgulamak için kullanılır.
+
+```php
+$result = $pratikdb->table('users')
+             ->whereBetween('age', 18, 30)
+             ->get();
+ ```
+
+  #### when
+
+when fonksiyonu, belirtilen koşulun doğru olması durumunda bir işlem yapmak için kullanılır. Koşul yanlışsa, varsayılan bir işlem yapılır.
+
+```php
+$result = $pratikdb->table('users')
+             ->when($isAdult, function($query) {
+                 $query->where('age', '>=', 18);
+             })
+ ```
+
 #### Pluck
 
 Sorgu sonucunda belirtilen sütundaki değerleri alın:
 
 ```php
 $names = $pratikdb->table('products')->pluck('name');
+$names = $pratikdb->table('products')->pluck('name','id')->toArray();
+$names = $pratikdb->table('products')->pluck('name','id')->toJson();
  ```
 
 #### To Array

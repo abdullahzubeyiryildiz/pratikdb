@@ -30,6 +30,11 @@ class Collection implements Countable, IteratorAggregate, ArrayAccess
         return $this->items;
     }
 
+    public function toJson()
+    {
+        return json_encode($this->items);
+    }
+
     
     public function offsetExists($offset): bool
     {

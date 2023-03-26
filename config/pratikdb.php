@@ -67,8 +67,8 @@ class PratikDB {
         return $this;
     }
     
-    public function select($columns = ['*']) {
-        $this->columns = $columns;
+    public function select(...$columns) {
+        $this->columns = empty($columns) ? ['*'] : (is_array($columns[0]) ? $columns[0] : $columns);
         return $this;
     }
     
@@ -124,14 +124,33 @@ class PratikDB {
         return $this;
     }
     
-    public function whereBetween($column, $min, $max) {
+  /*  public function whereBetween($column, $min, $max) {
         $this->where[] = "$column BETWEEN ? AND ?";
         $this->bindings[] = $min;
         $this->bindings[] = $max;
         return $this;
+    } */
+    public function whereBetween($column, $min, $max, $boolean = 'and') {
+        $this->where[] = [
+            'type' => 'between',
+            'column' => $column,
+            'boolean' => $boolean,
+            'min' => $min,
+            'max' => $max
+        ];
+        $this->bindings[] = $min;
+        $this->bindings[] = $max;
+        return $this;
     }
-    
+   /* public function orderBy($column, $direction = 'ASC') {
+        $this->order[] = "$column $direction";
+        return $this;
+    } */
+
     public function orderBy($column, $direction = 'ASC') {
+        if (strpos($column, '.') === false) {
+            $column = "$this->table.$column";
+        }
         $this->order[] = "$column $direction";
         return $this;
     }
@@ -141,20 +160,33 @@ class PratikDB {
         return $this;
     }
     
-    public function join($table, $first, $operator = '=', $second = null, $type = 'INNER') {
+  /*  public function join($table, $first, $operator = '=', $second = null, $type = 'INNER') {
         if ($second === null) {
             $second = $operator;
             $operator = '=';
         }
         $this->joins[] = "$type JOIN $table ON $first $operator $second";
         return $this;
-    }
+    } */
+
+    public function join($table, $firstColumn, $operator, $secondColumn)
+{
+    $this->joins[] = "INNER JOIN $table ON $firstColumn $operator $secondColumn";
+    return $this;
+}
     
-    public function get() {
+    public function get() {  
         $sql = $this->buildQuery(); 
         $stmt = $this->pdo->prepare($sql); 
         foreach ($this->bindings as $index => $value) {
-            $stmt->bindValue($index + 1, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+            if (is_array($value)) {
+                foreach ($value as $val) {
+                    $stmt->bindValue($index + 1, $val, is_int($val) ? PDO::PARAM_INT : PDO::PARAM_STR);
+                    $index++;
+                }
+            } else {
+                $stmt->bindValue($index + 1, $value, is_int($value) ? PDO::PARAM_INT : PDO::PARAM_STR);
+            }
         } 
         $stmt->execute();
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -177,7 +209,9 @@ class PratikDB {
         return $stmt->fetchColumn();
     }
     
-    protected function buildQuery() {
+   
+
+    public function buildQuery() {
         $query = "SELECT " . implode(', ', $this->columns) . " FROM $this->table";
         
         if (!empty($this->joins)) {
@@ -185,8 +219,23 @@ class PratikDB {
         }
         
         if (!empty($this->where)) {
-            $whereString = implode(' ', $this->where);
-            $whereString = preg_replace('/^\s*(AND|OR)\s*/', '', $whereString); 
+            $whereString = '';
+            $bindings = [];
+            foreach ($this->where as $where) {
+                if (is_array($where)) {
+                    if ($where['type'] === 'between') {
+                        $whereString .= "{$where['boolean']} {$where['column']} BETWEEN ? AND ? ";
+                        $bindings[] = $where['min'];
+                        $bindings[] = $where['max'];
+                    } else {
+                        $whereString .= "{$where['boolean']} {$where['column']} {$where['operator']} ? ";
+                        $bindings[] = $where['value'];
+                    }
+                } else {
+                    $whereString .= "{$where} ";
+                }
+            }
+            $whereString = preg_replace('/^\s*(AND|OR)\s*/', '', $whereString);
             $query .= " WHERE " . $whereString;
         }
         
@@ -194,21 +243,29 @@ class PratikDB {
             $query .= " ORDER BY " . implode(', ', $this->order);
         }
         if ($this->limit !== null) {
-            $query .= " LIMIT $this->limit";
+            $query .= " LIMIT " . $this->limit;
         }
- 
         return $query;
     }
     
-    public function pluck($column) {
+    
+    public function pluck($column, $key = null) {
         $this->columns = [$column];
+        if ($key !== null) {
+            $this->columns[] = $key;
+        }
         $result = $this->get();
-        $values = array_column($result, $column);
+        if ($key !== null) {
+            $values = array_column($result, $column, $key);
+        } else {
+            $values = array_column($result, $column);
+        }
         return new Collection($values);
     }
     
+ 
     public function toArray() {
-        return new Collection($this->get());
+        return $this->get();
     }
     
     public function toJson()
