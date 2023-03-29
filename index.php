@@ -6,4 +6,4 @@ include_once 'config/pratikdb.php';
 $database = new Database(); 
 $db = $database->getConnection(); 
 
- 
+$pratikdb = new PratikDB($db);

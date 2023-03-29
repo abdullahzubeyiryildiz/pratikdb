@@ -164,7 +164,7 @@ $result = $pratikdb->cte('max_scores', function ($subQuery) {
  #### GROUP BY 
  GROUP BY SQL ifadesi, belirtilen sütunlara göre benzer kayıtları gruplamak ve her bir grup üzerinde toplu işlemler gerçekleştirmek için kullanılır. Bu işlemler, toplama, sayma, ortalama alma gibi toplu işlemleri içerebilir.
  ```php
- /$data = $pratikdb->table('categories')->groupBy('cat_name')->get();
+ $data = $pratikdb->table('categories')->groupBy('cat_name')->get();
 ```
 
 #### Pluck
