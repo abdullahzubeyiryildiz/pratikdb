@@ -1,4 +1,4 @@
-# PratikDB & QueryBuilder
+# PratikDB QueryBuilder
 
 PratikDB, PHP programlama dilinin en güçlü veritabanı bağlantı aracı olan PDO kullanarak MySQL sorgularını oluşturmak ve çalıştırmak için özel olarak tasarlanmıştır. Esnek yapısı ve basit kullanımı sayesinde, geliştiricilerin işlerini kolaylaştırır ve zaman kazandırır.
 
