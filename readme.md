@@ -1,4 +1,4 @@
-# PratikDB
+# PratikDB & QueryBuilder
 
 PratikDB, PHP programlama dilinin en güçlü veritabanı bağlantı aracı olan PDO kullanarak MySQL sorgularını oluşturmak ve çalıştırmak için özel olarak tasarlanmıştır. Esnek yapısı ve basit kullanımı sayesinde, geliştiricilerin işlerini kolaylaştırır ve zaman kazandırır.
 
@@ -119,6 +119,53 @@ $result = $pratikdb->table('users')
                  $query->where('age', '>=', 18);
              })
  ```
+
+
+
+  #### with
+
+with fonksiyonu, sınıfta kullanılan bir yöntemdir ve CTE (Common Table Expressions) denilen yapıları desteklemeye yarar. CTE'ler, karmaşık SQL sorgularını daha okunabilir ve düzenli hale getirmek için kullanılabilir.
+
+Kısaca, with fonksiyonu sayesinde, bir alt sorguyu (subquery) temsil eden CTE'yi tanımlayabilir ve ana sorgunuzda bu CTE'yi kullanarak daha karmaşık sorguları daha basit ve anlaşılır hale getirebilirsiniz.
+
+```php 
+$result = $pratikdb->with('total_scores', function ($query) {
+    $query->table('students')
+        ->select('students.id', 'first_name', 'last_name', 'score')
+        ->join('scores', 'students.id', '=', 'scores.student_id');
+})
+->table('total_scores')
+->groupBy('id', 'first_name', 'last_name')
+->select('first_name', 'last_name', 'SUM(score) as total_score')
+->get();
+ ```
+
+
+
+  #### cte
+ CTE (Common Table Expressions) fonksiyonu, SQL sorgularında kullanılabilen geçici sonuç kümesi oluşturmanıza olanak tanır. Bu sınıfın cte fonksiyonu, veritabanı sorgularında CTE kullanmayı kolaylaştırmak amacıyla oluşturulmuştur.
+
+Fonksiyon, bir takma ad (alias) ve geri çağırılabilir (callable) bir işlev (callback) alır. İşlev, alt sorgunun nasıl oluşturulacağını tanımlar. cte fonksiyonu, önce alt sorguyu oluşturur ve ardından bağlamaları (bindings) birleştirir. Daha sonra, ana tabloyu CTE'ye göre günceller ve CTE'yi temel alarak veritabanı sorgularını gerçekleştirmenize olanak sağlar.
+
+Özetle, cte fonksiyonu, CTE'leri kullanarak daha karmaşık sorgular yapmanıza ve kodunuzu daha okunabilir hale getirmenize yardımcı olur.
+
+```php
+$result = $pratikdb->cte('max_scores', function ($subQuery) {
+    $subQuery->table('top_scores')
+             ->select('user_id', 'MAX(score) as max_score')
+             ->groupBy('user_id');
+})->select('user_id', 'max_score')
+  ->table('top_scores')
+  ->join('max_scores', 'top_scores.user_id', '=', 'max_scores.user_id')
+  ->whereRaw('top_scores.score = max_scores.max_score')
+  ->get();
+```
+
+ #### GROUP BY 
+ GROUP BY SQL ifadesi, belirtilen sütunlara göre benzer kayıtları gruplamak ve her bir grup üzerinde toplu işlemler gerçekleştirmek için kullanılır. Bu işlemler, toplama, sayma, ortalama alma gibi toplu işlemleri içerebilir.
+ ```php
+ /$data = $pratikdb->table('categories')->groupBy('cat_name')->get();
+```
 
 #### Pluck
 

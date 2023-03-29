@@ -9,6 +9,9 @@ class PratikDB {
     protected $order = [];
     protected $limit;
     protected $joins = [];
+    protected $groupBy = [];
+    protected $withs = [];
+    
     
     public function __construct(PDO $pdo) {
         $this->pdo = $pdo;
@@ -86,6 +89,12 @@ class PratikDB {
         $this->where[] = "$column $operator ?";
         $this->bindings[] = $value;
         
+        return $this;
+    }
+
+    public function whereRaw($rawCondition)
+    {
+        $this->where[] = $rawCondition;
         return $this;
     }
 
@@ -212,19 +221,52 @@ class PratikDB {
         return $stmt->fetchColumn();
     }
     
-   
+    public function with($alias, callable $callback) {
+        $subQuery = new static($this->pdo);
+        $callback($subQuery);
+        $subQuerySql = $subQuery->buildQuery();
+        $this->bindings = array_merge($this->bindings, $subQuery->bindings);
+        $this->withs[] = "$alias AS ($subQuerySql)";
+        return $this;
+    }
+    
+    
+    public function cte($alias, callable $callback)
+    {
+        $subQuery = new static($this->pdo);
+        $callback($subQuery);
+        $subQuerySql = $subQuery->buildQuery();
+        $this->bindings = array_merge($this->bindings, $subQuery->bindings);
+        $this->table = "$alias ($subQuerySql)";
+        return $this;
+    }
+    
+    public function groupBy(...$columns)
+    {
+        $this->groupBy = $columns;
+        return $this;
+    }
 
     public function buildQuery() {
+        $query = "";
+        if (!empty($this->withs)) {
+            $query .= "WITH " . implode(', ', $this->withs) . " ";
+        }
+
         $query = "SELECT " . implode(', ', $this->columns) . " FROM $this->table";
         
         if (!empty($this->joins)) {
             $query .= " " . implode(' ', $this->joins);
         }
-        
+
         if (!empty($this->where)) {
             $query .= " WHERE " . implode(' AND ', $this->where);
         }
-        
+ 
+        if (!empty($this->groupBy)) {
+            $query .= " GROUP BY " . implode(', ', $this->groupBy);
+        }
+         
         if (!empty($this->order)) {
             $query .= " ORDER BY " . implode(', ', $this->order);
         }

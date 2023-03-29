@@ -14,7 +14,14 @@ class Database {
             $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $this->conn->exec("set names $this->charset");
             $this->conn->exec("set collation_connection = $this->chartset_name");
-           // echo "Connection successful";
+            $this->conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $this->conn->exec("SET sql_mode = ''");
+           
+          
+            // echo "Connection successful";
+
+           
         } catch(PDOException $e) {
            // echo "Connection failed: " . $e->getMessage();
         }
