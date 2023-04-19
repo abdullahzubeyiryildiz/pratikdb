@@ -47,7 +47,7 @@ $db = $database->getConnection();
 $pratikdb = new PratikDB($db); 
 
 /*
-PostgreSQL Kullanmak isterseniz
+PostgreSQL kullanmak isterseniz
 $database = new Database("postgresql");
 $db = $database->getConnection();
 */
