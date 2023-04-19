@@ -43,8 +43,14 @@ $names = $pratikdb2->table('products')->pluck('name');
 ```php
 //Veritabanı bağlantısı oluşturma 
 $database = new Database(); 
-$db = $database->getConnection(); 
+$db = $database->getConnection();  
 $pratikdb = new PratikDB($db); 
+
+/*
+PostgreSQL Kullanmak isterseniz
+$database = new Database("postgresql");
+$db = $database->getConnection();
+*/
   
 //Veri ekleme
 $insertedId = $pratikdb->table('products')
