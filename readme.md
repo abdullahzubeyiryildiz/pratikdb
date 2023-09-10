@@ -1,36 +1,35 @@
 # PratikDB QueryBuilder
 
-PratikDB, PHP programlama dilinin en güçlü veritabanı bağlantı aracı olan PDO kullanarak MySQL sorgularını oluşturmak ve çalıştırmak için özel olarak tasarlanmıştır. Esnek yapısı ve basit kullanımı sayesinde, geliştiricilerin işlerini kolaylaştırır ve zaman kazandırır.
+PratikDB is specifically designed to create and execute MySQL queries using PDO, the most powerful database connection tool in the PHP programming language. Its flexible structure and easy-to-use interface make it a valuable tool for developers, simplifying their work and saving them time.
 
-PratikDB, güvenlik ve optimize edilmiş sorgular sağlamak için bağlamalı parametreler ve dinamik bir yapı kullanır. Bu sayede, veritabanına gönderilen sorguların güvenliği sağlanır ve daha iyi performans elde edilir.
+PratikDB utilizes parameter binding and a dynamic structure to ensure security and optimize queries sent to the database. This ensures the security of the queries sent to the database and results in better performance.
 
-Sınıfın tasarımı, popüler PHP framework'ü Laravel'den ilham alınarak yapılmıştır. Bu nedenle, Laravel kullanıcılarına benzer bir deneyim sunar.
+The design of the class is inspired by the popular PHP framework Laravel, offering a similar experience to Laravel users.
 
-PratikDB, geliştiricilerin veritabanı işlemlerini hızlandırmalarına, kodlarını daha düzenli hale getirmelerine ve daha az hata yapmalarına yardımcı olur. Bu nedenle, birçok PHP projesinde tercih edilen bir sınıftır.
+PratikDB helps developers speed up their database operations, maintain cleaner code, and make fewer errors. Therefore, it's a preferred class in many PHP projects.
 
-### Gereksinimler
+### Requirements
 
-- PHP 7.1 ve üzeri
-- MySQL veritabanı
+- PHP 7.1 and above
+- MySQL database
 
-### Kurulum
+### Installation
 
-1. Projeyi kendi projenizde kullanmak için `PratikDB.php` dosyasını projenizin ilgili klasörüne kopyalayın.
-2. `db.php` dosyasını kendi veritabanı bilgilerinizle güncelleyin.
-3. `PratikDB.php` dosyasında, `PratikDB` sınıfını ve `dd()` yardımcı fonksiyonunu kullanabilmek için dosyayı projenizin diğer PHP dosyalarına dahil edin.
+1. To use the PratikDB in your project, copy the `PratikDB.php` file to the relevant folder in your project.
+2. Update the `db.php` file with your database credentials.
+3. Include the `PratikDB.php` file in other PHP files of your project to use the `PratikDB` class and the`dd()` helper function.
 
 ```php
 include 'config/db.php'; 
 include 'config/pratikdb.php'; 
 ```
 
-### Kullanım - Aynı Sayfada Birden Fazla Sorgu
+### Usage - Running Multiple Queries on the Same Page
 
-<b>Eğer aynı sayfada birden fazla sorgu çalıştırmak isterseniz, her sorgu için yeni bir PratikDB nesnesi oluşturarak önceki sorguların birbirini etkilemesini önleyebilirsiniz.</b>
-PratikDB sınıfı, aşağıdaki gibi temel CRUD işlemleri ve daha fazlasını gerçekleştirebilir.
+<b>If you want to execute multiple queries on the same page, you can prevent previous queries from affecting each other by creating a new PratikDB object for each query.</b> The PratikDB class can perform basic CRUD operations and more, as demonstrated below:
 
 ```php
-//örnek kullanımlar
+// Example usages
 $pratikdb1 = new PratikDB($db);
 $deneme1 = $pratikdb1->table('products')
     ->whereIn('id', [2, 3, 4])
@@ -41,25 +40,25 @@ $names = $pratikdb2->table('products')->pluck('name');
 ```
 
 ```php
-//Veritabanı bağlantısı oluşturma 
+//Creating a database connection
 $database = new Database(); 
 $db = $database->getConnection();  
 $pratikdb = new PratikDB($db); 
 
 /*
-PostgreSQL kullanmak isterseniz
+If you want to use PostgreSQL:
 $database = new Database("postgresql");
 $db = $database->getConnection();
 */
   
-//Veri ekleme
+//Data insertion
 $insertedId = $pratikdb->table('products')
     ->create([
         'name' => 'Ürün 1',
         'price' => 100,
     ]);
 
-//Veri güncelleme
+//Data update
 $affectedRows = $pratikdb->table('products')
     ->where('id', 1)
     ->update([
@@ -67,12 +66,12 @@ $affectedRows = $pratikdb->table('products')
         'price' => 200,
     ]);
 
-//Veri silme
+//Data deletion
 $affectedRows = $pratikdb->table('products')
     ->where('id', 1)
     ->delete();
 
-//Veri okuma ve filtreleme
+//Data retrieval and filtering
 $results = $pratikdb->table('products')
     ->select(['name', 'price'])
     ->where(function ($query) {
@@ -83,20 +82,20 @@ $results = $pratikdb->table('products')
     ->limit(10)
     ->get();
 
-//İlişkili tablolarla çalışma 
+//Working with related tables
 $results = $pratikdb->table('products')
     ->select(['products.name', 'categories.name AS category_name'])
     ->join('categories', 'products.category_id', 'categories.id')
     ->get();
 ```
 
-### Diğer özellikler
+### Other Features
 
-PratikDB sınıfı, `where`, `whereIn`, `whereBetween`, `when` gibi filtreleme ve koşul sağlayan daha fazla yönteme sahiptir. Ayrıca `pluck`, `toArray`, `toJson` ve `toSql` gibi ek yardımcı işlevler sağlar. Bu yöntemlerin daha fazla örneği şunlardır:
+The PratikDB class offers more methods for filtering and conditionally querying data, such as `where`, `whereIn`, `whereBetween` `when`. It also provides additional helper functions like `pluck`, `toArray`, `toJson` and `toSql`. Here are more examples of these methods:
 
 #### whereIn
 
-whereIn fonksiyonu, belirtilen sütunda değerlerin bir dizi ile eşleşip eşleşmediğini sorgulamak için kullanılır.
+The whereIn function is used to query whether values in a specified column match an array of values.
 
 ```php
 $result = $pratikdb->table('users')
@@ -106,7 +105,7 @@ $result = $pratikdb->table('users')
 
  #### whereBetween
 
-whereBetween fonksiyonu, belirtilen sütunda verilen iki değer arasında kalan değerleri sorgulamak için kullanılır.
+The whereBetween function is used to query values in a specified column that fall between two given values.
 
 ```php
 $result = $pratikdb->table('users')
@@ -116,7 +115,7 @@ $result = $pratikdb->table('users')
 
   #### when
 
-when fonksiyonu, belirtilen koşulun doğru olması durumunda bir işlem yapmak için kullanılır. Koşul yanlışsa, varsayılan bir işlem yapılır.
+The when function is used to perform an operation based on a specified condition. If the condition is false, a default operation is performed.
 
 ```php
 
@@ -130,9 +129,9 @@ $result = $pratikdb->table('users')
 
   #### with
 
-with fonksiyonu, sınıfta kullanılan bir yöntemdir ve CTE (Common Table Expressions) denilen yapıları desteklemeye yarar. CTE'ler, karmaşık SQL sorgularını daha okunabilir ve düzenli hale getirmek için kullanılabilir.
+The with function is a method used within the class and is intended to support Common Table Expressions (CTEs). CTEs can be used to make complex SQL queries more readable and organized.
 
-Kısaca, with fonksiyonu sayesinde, bir alt sorguyu (subquery) temsil eden CTE'yi tanımlayabilir ve ana sorgunuzda bu CTE'yi kullanarak daha karmaşık sorguları daha basit ve anlaşılır hale getirebilirsiniz.
+In short, the with function allows you to define a CTE representing a subquery and then use this CTE in your main query to simplify and clarify more complex queries.
 
 ```php 
 $result = $pratikdb->with('total_scores', function ($query) {
@@ -149,11 +148,11 @@ $result = $pratikdb->with('total_scores', function ($query) {
 
 
   #### cte
- CTE (Common Table Expressions) fonksiyonu, SQL sorgularında kullanılabilen geçici sonuç kümesi oluşturmanıza olanak tanır. Bu sınıfın cte fonksiyonu, veritabanı sorgularında CTE kullanmayı kolaylaştırmak amacıyla oluşturulmuştur.
+The cte function is used for creating Common Table Expressions (CTEs) in SQL queries. CTEs allow you to create temporary result sets in SQL queries. This function takes an alias and a callable function that defines how the subquery is constructed.
 
-Fonksiyon, bir takma ad (alias) ve geri çağırılabilir (callable) bir işlev (callback) alır. İşlev, alt sorgunun nasıl oluşturulacağını tanımlar. cte fonksiyonu, önce alt sorguyu oluşturur ve ardından bağlamaları (bindings) birleştirir. Daha sonra, ana tabloyu CTE'ye göre günceller ve CTE'yi temel alarak veritabanı sorgularını gerçekleştirmenize olanak sağlar.
+The cte function creates the subquery, combines bindings, updates the main table based on the CTE, and allows you to perform database queries based on the CTE.
 
-Özetle, cte fonksiyonu, CTE'leri kullanarak daha karmaşık sorgular yapmanıza ve kodunuzu daha okunabilir hale getirmenize yardımcı olur.
+In summary, the cte function facilitates the use of CTEs to make complex queries and improve code readability.
 
 ```php
 $result = $pratikdb->cte('max_scores', function ($subQuery) {
@@ -168,14 +167,14 @@ $result = $pratikdb->cte('max_scores', function ($subQuery) {
 ```
 
  #### GROUP BY 
- GROUP BY SQL ifadesi, belirtilen sütunlara göre benzer kayıtları gruplamak ve her bir grup üzerinde toplu işlemler gerçekleştirmek için kullanılır. Bu işlemler, toplama, sayma, ortalama alma gibi toplu işlemleri içerebilir.
+The GROUP BY SQL statement is used to group similar records based on specified columns and perform aggregate functions on each group. These functions can include operations like summing, counting, or averaging.
  ```php
  $data = $pratikdb->table('categories')->groupBy('cat_name')->get();
 ```
 
 #### Pluck
 
-Sorgu sonucunda belirtilen sütundaki değerleri alın:
+Retrieve values from a specific column in the query result:
 
 ```php
 $names = $pratikdb->table('products')->pluck('name');
@@ -184,20 +183,20 @@ $names = $pratikdb->table('products')->pluck('name','id')->toJson();
  ```
 
 #### To Array
-Sonuçları, anahtar-değer çiftleri olarak içeren bir diziye dönüştürün:
+Convert the results into an array with key-value pairs:
 
 ```php
 $resultsArray = $pratikdb->table('products')->toArray();
  ```
  
 #### To JSON
-Sonuçları JSON formatında döndürün:
+Return the results in JSON format:
 ```php
 $resultsJson = $pratikdb->table('products')->toJson();
  ```
 
 #### To SQL
-Sorguyu oluşturun ve sorgu dizesini görüntüleyin (veritabanında çalıştırmadan):
+Build the query and display the SQL query string (without executing it in the database):
 
 ```php
 $pratikdb->table('products')
