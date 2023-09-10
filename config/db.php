@@ -10,18 +10,17 @@ class Database {
 
     public function __construct($dbType = "mysql") {
         try { 
-            if ($dbType == "mysql") {
-                $this->database = "mysql_database";
-                $dsn = "mysql:host=$this->host;dbname=$this->database";
-            } else if ($dbType == "postgresql") {
-                $this->database = "postgresql_database";
+            if ($dbType == "mysql") { 
+                $dsn = "mysql:host=$this->host;dbname=$this->database;charset=$this->charset";
+            } else if ($dbType == "postgresql") { 
                 $dsn = "pgsql:host=$this->host;dbname=$this->database";
-            }
-
+            } 
+    
             $options = array(
-                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES $this->charset COLLATE $this->chartset_name",
+                PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES '$this->charset' COLLATE '$this->chartset_name'",
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
             );
+            
             $this->conn = new PDO($dsn, $this->username, $this->password, $options);
             echo "Connection successful";
         } catch(PDOException $e) {
