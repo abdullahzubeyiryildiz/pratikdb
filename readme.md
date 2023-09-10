@@ -54,7 +54,7 @@ $db = $database->getConnection();
 //Data insertion
 $insertedId = $pratikdb->table('products')
     ->create([
-        'name' => 'Ürün 1',
+        'name' => 'Product 1',
         'price' => 100,
     ]);
 
@@ -62,7 +62,7 @@ $insertedId = $pratikdb->table('products')
 $affectedRows = $pratikdb->table('products')
     ->where('id', 1)
     ->update([
-        'name' => 'Ürün 1 Yeni',
+        'name' => 'Product 1 New',
         'price' => 200,
     ]);
 
