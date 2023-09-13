@@ -136,12 +136,7 @@ class PratikDB {
         return $this;
     }
     
-  /*  public function whereBetween($column, $min, $max) {
-        $this->where[] = "$column BETWEEN ? AND ?";
-        $this->bindings[] = $min;
-        $this->bindings[] = $max;
-        return $this;
-    } */
+  
     public function whereBetween($column, $min, $max, $boolean = 'and') {
         $this->where[] = [
             'type' => 'between',
@@ -154,10 +149,7 @@ class PratikDB {
         $this->bindings[] = $max;
         return $this;
     }
-   /* public function orderBy($column, $direction = 'ASC') {
-        $this->order[] = "$column $direction";
-        return $this;
-    } */
+  
 
     public function orderBy($column, $direction = 'ASC') {
         if (strpos($column, '.') === false) {
@@ -172,15 +164,7 @@ class PratikDB {
         return $this;
     }
     
-  /*  public function join($table, $first, $operator = '=', $second = null, $type = 'INNER') {
-        if ($second === null) {
-            $second = $operator;
-            $operator = '=';
-        }
-        $this->joins[] = "$type JOIN $table ON $first $operator $second";
-        return $this;
-    } */
-
+ 
     public function join($table, $firstColumn, $operator, $secondColumn)
 {
     $this->joins[] = "INNER JOIN $table ON $firstColumn $operator $secondColumn";
